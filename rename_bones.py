@@ -5,9 +5,9 @@ bl_info = {
     "name": "Ported Tools",
     "author": "Zaher Dirkey",
     "version": (1, 0),
-    "blender": (2, 75, 0),
+    "blender": (2, 70, 0),
     "location": "View3D > Object > Ported Tools > ",
-    "description": "Rename Bones",
+    "description": "Rename, Export Bones (VRoid)",
     "warning": "",
     "wiki_url": "",
     "category": "User"
