@@ -134,8 +134,10 @@ class PT_RenameBones(Operator):
         if hasattr(context.object.data, 'bones'):
             for b in context.object.data.bones:
                 if b.name in dict.keys():
-                    print("renamed: " + b.name + " -> " + dict[b.name])
-                    b.name = dict[b.name]
+                    toname = dict[b.name]
+                    if toname != "":
+                        print("renamed: " + b.name + " -> " + dict[b.name])
+                        b.name = dict[b.name]
 
         return {'FINISHED'}
 
