@@ -37,7 +37,7 @@ class PT_ParentMenu(bpy.types.Menu):
 class PT_RenameBones(Operator):
 
     bl_idname = "object.rename_bones"
-    bl_label = "Rename Bones"
+    bl_label = "Rename VRoid Bones"
     bl_options = {'REGISTER', 'UNDO'}
 
     def draw(self, context):
@@ -49,11 +49,11 @@ class PT_RenameBones(Operator):
     def execute(self, context):
 
         dict = {
-            'Root': 'mPelvis',
-            'J_Bip_C_Hips': '',
+            'Root': 'mPelvis', # mabye leave it as Root
+            'J_Bip_C_Hips': '',  # maybe is mPelvis
             'J_Bip_C_Spine': 'mTorso',
             'J_Bip_C_Chest': 'mChest',
-            'J_Bip_C_UpperChest': '',
+            'J_Bip_C_UpperChest': '',     #delete it or it is a chest or delete C_Chest idk
             'J_Sec_L_Bust1': 'LEFT_PEC',
             'J_Sec_L_Bust2': '',
             'J_Sec_R_Bust1': 'RIGHT_PEC',
@@ -163,7 +163,7 @@ class PT_ExportBones(Operator):
         if hasattr(context.object.data, 'bones'):
             with open(self.filepath, 'w') as f:
                 for b in context.object.data.bones:
-                   f.write(b.name+"\n\r")
+                    f.write(b.name+"\n\r")
             return {'FINISHED'}
 
         return {'FINISHED'}
