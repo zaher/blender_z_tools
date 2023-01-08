@@ -2,11 +2,11 @@
 #* https://blenderartists.org/t/renaming-bone-script/1299862/5
 
 bl_info = {
-    "name": "Ported Tools",
+    "name": "Z Tools",
     "author": "Zaher Dirkey",
     "version": (1, 0),
     "blender": (2, 70, 0),
-    "location": "View3D > Object > Ported Tools > ",
+    "location": "View3D > Object > Z Tools > ",
     "description": "Rename, Export Bones (VRoid)",
     "warning": "",
     "wiki_url": "",
