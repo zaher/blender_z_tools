@@ -1,17 +1,7 @@
+"""Module Blender Z Tools Rename Bones."""
+
 #* https://docs.blender.org/api/2.79/bpy.ops.object.html
 #* https://blenderartists.org/t/renaming-bone-script/1299862/5
-
-bl_info = {
-    "name": "Z Tools",
-    "author": "Zaher Dirkey",
-    "version": (1, 0),
-    "blender": (2, 70, 0),
-    "location": "View3D > Object > Z Tools > ",
-    "description": "Rename, Export Bones (VRoid)",
-    "warning": "",
-    "wiki_url": "",
-    "category": "User"
-}
 
 import bpy
 from bpy.types import Operator
@@ -19,24 +9,24 @@ from bpy.props import FloatVectorProperty
 #from bpy_extras.object_utils import AddObjectHelper, object_data_add
 from mathutils import Vector
 
-def top_menu(self, context):
-    self.layout.menu(
-        "PT_ParentMenu",
-        text=PT_ParentMenu.bl_label
-    )
-
-class PT_ParentMenu(bpy.types.Menu):
-    bl_idname = "PT_ParentMenu"
-    bl_label = "Ports Tools"
+class OBJ_Z_Tools(bpy.types.Menu):
+    bl_idname = "OBJ_Z_Tools" #same as class name
+    bl_label = "Z Tools"
 
     def draw(self, context):
         layout = self.layout
 
-##################################
+def OBJ_Z_Tools_menu(self, context):
+    self.layout.menu(
+        OBJ_Z_Tools.bl_idname,
+        text=OBJ_Z_Tools.bl_label
+    )
 
-class PT_RenameBones(Operator):
+## Rename Bones
 
-    bl_idname = "object.rename_bones"
+class Rename_bones(Operator):
+
+    bl_idname = "object.zt_rename_bones"
     bl_label = "Rename VRoid Bones"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -141,11 +131,17 @@ class PT_RenameBones(Operator):
 
         return {'FINISHED'}
 
-##################################
+def rename_bones_menu(self, context):
+    self.layout.operator(
+        Rename_bones.bl_idname,
+        text=Rename_bones.bl_label
+    )
 
-class PT_ExportBones(Operator):
+## Export Bones Names
 
-    bl_idname = "object.export_bones"
+class Export_bones(Operator):
+
+    bl_idname = "object.zt_export_bones"
     bl_label = "Export Bones"
     bl_options = {'REGISTER', 'UNDO'}
     filepath = bpy.props.StringProperty(subtype="FILE_PATH")
@@ -173,41 +169,30 @@ class PT_ExportBones(Operator):
         context.window_manager.fileselect_add(self)
         return {'RUNNING_MODAL'}
 
-##################################
-
-# Registration
-
-def rename_menu(self, context):
+def export_bones_menu(self, context):
     self.layout.operator(
-        PT_RenameBones.bl_idname,
-        text=PT_RenameBones.bl_label
+        Export_bones.bl_idname,
+        text=Export_bones.bl_label
     )
 
-def export_menu(self, context):
-    self.layout.operator(
-        PT_ExportBones.bl_idname,
-        text=PT_ExportBones.bl_label
-    )
+## Registration
 
 def register():
-    bpy.utils.register_class(PT_ParentMenu)
-    bpy.types.VIEW3D_MT_object.append(top_menu)
+    bpy.utils.register_class(OBJ_Z_Tools)
+    bpy.types.VIEW3D_MT_object.append(OBJ_Z_Tools_menu)
 
-    bpy.utils.register_class(PT_RenameBones)
-    bpy.types.PT_ParentMenu.append(rename_menu)
+    bpy.utils.register_class(Rename_bones)
+    bpy.types.OBJ_Z_Tools.append(rename_bones_menu)
 
-    bpy.utils.register_class(PT_ExportBones)
-    bpy.types.PT_ParentMenu.append(export_menu)
+    bpy.utils.register_class(Export_bones)
+    bpy.types.OBJ_Z_Tools.append(export_bones_menu)
 
 def unregister():
-    bpy.types.PT_ParentMenu.remove(export_menu)
-    bpy.utils.unregister_class(PT_ExportBones)
+    bpy.types.OBJ_Z_Tools.remove(export_bones_menu)
+    bpy.utils.unregister_class(Export_bones)
 
-    bpy.types.PT_ParentMenu.remove(rename_menu)
-    bpy.utils.unregister_class(PT_RenameBones)
+    bpy.types.OBJ_Z_Tools.remove(rename_bones_menu)
+    bpy.utils.unregister_class(Rename_bones)
 
-    bpy.types.VIEW3D_MT_object.remove(top_menu)
-    bpy.utils.unregister_class(PT_ParentMenu)
-
-if __name__ == "__main__":
-    register()
+    bpy.types.VIEW3D_MT_object.remove(OBJ_Z_Tools_menu)
+    bpy.utils.unregister_class(OBJ_Z_Tools)
