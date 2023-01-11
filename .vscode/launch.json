@@ -1,0 +1,22 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+
+    "configurations": [
+        {
+            "name": "Attach to Remote",
+            "type": "python",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true
+            "request": "attach",
+            //"request": "launch",
+            "localRoot": "$(workspaceFolder)",
+            "remoteRoot": "$(workspaceFolder)",
+            "secret": "my_secret",
+            "host": "localhost"
+            "port": 5678,
+        }
+}
