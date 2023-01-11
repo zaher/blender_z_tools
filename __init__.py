@@ -1,4 +1,11 @@
 """Module Blender Z Tools."""
+import bpy
+from bpy.types import Operator
+from bpy.props import FloatVectorProperty
+
+from . import z_rename
+from . import z_uv
+
 bl_info = {
     "name": "Z Tools",
     "author": "Zaher Dirkey",
@@ -11,20 +18,13 @@ bl_info = {
     "category": "User"
 }
 
-import bpy
-from bpy.types import Operator
-from bpy.props import FloatVectorProperty
-
-from . import rename
-from . import align
-
 def register():
-    rename.register()
-    align.register()
+    z_rename.register()
+    z_uv.register()
 
 def unregister():
-    rename.unregister()
-    align.unregister()
+    z_rename.unregister()
+    z_uv.unregister()
 
 if __name__ == "__main__":
     register()
