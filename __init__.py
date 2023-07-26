@@ -35,11 +35,20 @@ bl_info = {
 
 class Z_ExportAll(Operator):
     bl_idname = "ztools.export_all"
-    bl_label = "Export All"
+    bl_label = "Export Individual"
 
     def execute(self, context):
         # Add code here to define what the operator should do
-        z_export_all.export_all_opensim()
+        z_export_all.export_all_opensim(individual=True)
+        return {'FINISHED'}
+
+class Z_ExportAllGouped(Operator):
+    bl_idname = "ztools.export_all_grouped"
+    bl_label = "Export Grouped"
+
+    def execute(self, context):
+        # Add code here to define what the operator should do
+        z_export_all.export_all_opensim(individual=False)
         return {'FINISHED'}
 
 class Z_Panel(Panel):
@@ -60,10 +69,13 @@ class Z_Panel(Panel):
 
         layout.label(text="Export:")
         
-        col = layout.column(align=True)
-        row = col.row(align=True)
+        row = layout.column(align=True)
+        #row = col.row(align=True)
+        row.operator(Z_ExportAll.bl_idname, text=Z_ExportAll.bl_label, icon="EXPORT")
 
-        col.operator(Z_ExportAll.bl_idname, text=Z_ExportAll.bl_label, icon="EXPORT")
+        row = layout.column(align=True)
+        #row = col.row(align=True)
+        row.operator(Z_ExportAllGouped.bl_idname, text=Z_ExportAllGouped.bl_label, icon="EXPORT")
 
 current_module = sys.modules[__name__]
 classes = inspect.getmembers(current_module, predicate=inspect.isclass)
