@@ -51,9 +51,9 @@ class Z_ExportAllGouped(Operator):
         z_export_all.export_all_opensim(individual=False)
         return {'FINISHED'}
 
-class Z_Panel(Panel):
-    bl_idname = "VIEW_3D_PT_z_tools"
-    bl_label = "Z Tools"
+class Z_Export_Panel(Panel):
+    bl_idname = "VIEW_3D_PT_z_exprot_tools"
+    bl_label = "Export Tools"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = "Z Tools"
@@ -77,6 +77,37 @@ class Z_Panel(Panel):
         #row = col.row(align=True)
         row.operator(Z_ExportAllGouped.bl_idname, text=Z_ExportAllGouped.bl_label, icon="EXPORT")
 
+class Z_CreateConvex(Operator):
+    bl_idname = "ztools.create_convex"
+    bl_label = "Create Convex"
+
+    def execute(self, context):
+        # Add code here to define what the operator should do
+        z_create_convex.create_convex()
+        return {'FINISHED'}
+
+class Z_Mesh_Panel(Panel):
+    bl_idname = "VIEW_3D_PT_z_mesh_tools"
+    bl_label = "Mesh Tools"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = "Z Tools"
+    bl_context = "objectmode" 
+    bl_options = {'DEFAULT_CLOSED'}
+
+#    @classmethod
+#    def poll(self,context):
+#        return context.object is not None
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.label(text="Mesh:")
+        
+        row = layout.column(align=True)
+        #row = col.row(align=True)
+        row.operator(Z_CreateConvex.bl_idname, text=Z_CreateConvex.bl_label)
+
 current_module = sys.modules[__name__]
 classes = inspect.getmembers(current_module, predicate=inspect.isclass)
 
@@ -84,24 +115,16 @@ def z_register():
     for name, cls in classes:
         if hasattr(cls, 'bl_idname'):     
             bpy.utils.register_class(cls)
-    #bpy.utils.register_class(Z_Panel)
-    #py.utils.register_class(Z_ExportAll)
 
 def z_unregister():
     for name, cls in reversed(classes):
         if hasattr(cls, 'bl_idname'):     
             bpy.utils.unregister_class(cls)
-    #py.utils.unregister_class(Z_ExportAll)
-    #bpy.utils.unregister_class(Z_Panel)
 
 def register():
     z_register()
-    #z_rename.register()
-    #z_tool.register()
 
 def unregister():
-    #z_rename.unregister()
-    #z_tool.unregister()
     z_unregister()
 
 if __name__ == "__main__":
