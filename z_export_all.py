@@ -72,18 +72,21 @@ def export_all_opensim(rename_mesh=True, individual=False):
         for obj in objects:
             if not obj.name.endswith(name_suffex):
                 obj.select_set(True)
-        export_objects(os.path.join(export_folder, base_name + ".dae"))
+        if len(bpy.context.selected_objects)>0:
+            export_objects(os.path.join(export_folder, base_name + ".dae"))
 
         bpy.ops.object.select_all(action='DESELECT')
         for obj in objects:
             if obj.name.endswith(name_suffex):
                 obj.select_set(True)
-        export_objects(os.path.join(export_folder, base_name + "-convex.dae"))
+        if len(bpy.context.selected_objects)>0:
+            export_objects(os.path.join(export_folder, base_name + "-convex.dae"))
 
     ## Export the rest if objects not in the list above in one file    
     bpy.ops.object.select_all(action='SELECT')
     for obj in objects:
         obj.select_set(False)
-    export_objects(os.path.join(export_folder, base_name + "-rest.dae"))
+    if len(bpy.context.selected_objects)>0:
+        export_objects(os.path.join(export_folder, base_name + "-rest.dae"))
     
     bpy.ops.object.select_all(action='DESELECT')
