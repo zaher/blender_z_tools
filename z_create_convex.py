@@ -43,6 +43,10 @@ def create_convex():
 
         mesh = obj.data
 
+        bpy.ops.object.mode_set(mode='EDIT')
+        bpy.ops.mesh.select_all(action='DESELECT')
+        bpy.ops.object.mode_set(mode='OBJECT')
+
         face_map_index = obj.face_maps[face_map_name].index
         face_map = mesh.face_maps[face_map_index] # no name for face map inside mesh
 
@@ -50,25 +54,29 @@ def create_convex():
         face_map_index = obj.face_maps[face_map_name].index
         face_map = mesh.face_maps[face_map_index] # no name for face map inside mesh
 
+        process = False
+        
         for i, fm_data in enumerate(face_map.data):
             # fm_data.value can be either -1 (unassigned) or the index of the face map it is assigned to
             selected = fm_data.value == face_map_index
             f = mesh.polygons[i]
             f.select = selected # Select the face, maybe we do not need it
+            process = True
 
-        old_selected = [o for o in bpy.context.scene.objects]
+        if process:
+            old_selected = [o for o in bpy.context.scene.objects]
 
-        bpy.ops.object.mode_set(mode='EDIT')
-        bpy.ops.mesh.duplicate_move(MESH_OT_duplicate={"mode":1})
-        bpy.ops.mesh.separate(type='SELECTED')
+            bpy.ops.object.mode_set(mode='EDIT')
+            bpy.ops.mesh.duplicate(mode=1)
+            bpy.ops.mesh.separate(type='SELECTED')
 
-        cur_selected = [o for o in bpy.context.scene.objects]
-        new_obj = [o for o in cur_selected if o not in old_selected][0]
+            cur_selected = [o for o in bpy.context.scene.objects]
+            new_obj = [o for o in cur_selected if o not in old_selected][0]
 
-        for coll in new_obj.users_collection:
-            coll.objects.unlink(new_obj)
+            for coll in new_obj.users_collection:
+                coll.objects.unlink(new_obj)
 
-        new_obj.name = new_name
-        new_obj.data.name = new_obj.name
-        convex_collection.objects.link(new_obj)
-        bpy.ops.object.mode_set(mode='OBJECT')
+            new_obj.name = new_name
+            new_obj.data.name = new_obj.name
+            convex_collection.objects.link(new_obj)
+            bpy.ops.object.mode_set(mode='OBJECT')
