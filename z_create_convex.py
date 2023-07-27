@@ -64,15 +64,18 @@ def create_convex():
             process = True
 
         if process:
+            ## to find the new object that separated we save old objects
             old_selected = [o for o in bpy.context.scene.objects]
 
             bpy.ops.object.mode_set(mode='EDIT')
             bpy.ops.mesh.duplicate(mode=1)
             bpy.ops.mesh.separate(type='SELECTED')
 
+            ## now we compare new objects with old to find new object created by separate
             cur_selected = [o for o in bpy.context.scene.objects]
             new_obj = [o for o in cur_selected if o not in old_selected][0]
 
+            ## Moving it to new collection
             for coll in new_obj.users_collection:
                 coll.objects.unlink(new_obj)
 
