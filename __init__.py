@@ -24,7 +24,7 @@ from . import z_export_all
 bl_info = {
     "name": "Z Tools",
     "author": "Zaher Dirkey",
-    "version": (1, 0),
+    "version": (1, 2),
     "blender": (3, 4, 0),
     "location": "View3D > Object > Z Tools > ",
     "description": "Z Tools",
