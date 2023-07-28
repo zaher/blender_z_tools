@@ -13,7 +13,9 @@ Switch "Edit Mode"
 Select faces that you want to make convex from it
 Go to on left Panel and find Face Map, Create new map name it "Convex", Assign this faces to it
 
-![Screenshot01](https://imgur.com/YsH6CPi)
+![Screenshot01](https://i.imgur.com/YsH6CPi.png)
+
+![Screenshot01](https://i.imgur.com/UDmglQK.png)
 
 ## Export
 
