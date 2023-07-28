@@ -64,11 +64,11 @@ def export_opensim(rename_mesh=True, individual=False):
     ## Export Objects that have Convex face map    
     if individual:        
         ## Export Objects file for each one
-        bpy.ops.object.select_all(action='DESELECT')
         for obj in objects:
+            bpy.ops.object.select_all(action='DESELECT')
             obj.select_set(True)
             export_objects(os.path.join(export_folder, obj.name + ".dae"))
-            
+
     else:
         ## Export Objects in one files but with end name -Convex in another one files too
         bpy.ops.object.select_all(action='DESELECT')
