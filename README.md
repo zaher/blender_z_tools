@@ -4,16 +4,18 @@ Blender 3.4 Tools
 
 ## Create Convex
 
-This will create a new objects from group of faces in Face Map that name "Convex" for each object
+This will create a new Object from group of selected faces in Face Map with the name "Convex" for each Object
 
-New objects created under new collection "Convex"
+New Objects are created in a  new Collection called "Convex"
 
 ## Export
 
-Export all, expert each project as DAE file into "output" folder, each object have a file exported
+Export functions will fix mesh name to the same name of object name, this help OpenSIM handle the linkset
 
-Export Grouped, it exported to 3 DAE files,
+Export Individual: Will export each project as DAE file into "output" folder, each Object will have a standalone file exported, using the same name of object.
 
-* Objects that have Face Map faces group with name "Convex",
-* Objects that created from Face Map faces group, it is a convex mesh for first objects
-* Objects that dosnt have Face Map "Convex", that object no need to have convex
+Export Grouped: Will export to 3 .dea files,
+
+    Objects that have Face Map :  Face Group named "Convex",
+    Objects that created from Face Map:  Face Group, it is a convex mesh for first objects.
+    Objects that doesn't have Face Map:  "Convex", for parts of the object that have no need for a Convex.

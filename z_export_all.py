@@ -14,7 +14,7 @@ face_map_name = "Convex"
 name_suffex =  "-Convex"
 # Replace these with the names of the objects you want to export
 
-def export_all_opensim(rename_mesh=True, individual=False):
+def export_opensim(rename_mesh=True, individual=False):
 
     if rename_mesh:
         ## Correct names of mesh
@@ -23,8 +23,11 @@ def export_all_opensim(rename_mesh=True, individual=False):
                 obj.data.name = obj.name                
         #    else:
         #        obj.transform_apply(location=True, rotation=True, scale=True, isolate_users=True)
-                    
-    objects = [obj for obj in bpy.data.objects if face_map_name in obj.face_maps]
+    
+    if individual:
+        objects = [obj for obj in bpy.context.selected_objects]
+    else:                        
+        objects = [obj for obj in bpy.data.objects if face_map_name in obj.face_maps]
                     
     #export_preset_name = "My"
 
@@ -82,11 +85,12 @@ def export_all_opensim(rename_mesh=True, individual=False):
         if len(bpy.context.selected_objects)>0:
             export_objects(os.path.join(export_folder, base_name + "-convex.dae"))
 
-    ## Export the rest if objects not in the list above in one file    
-    bpy.ops.object.select_all(action='SELECT')
-    for obj in objects:
-        obj.select_set(False)
-    if len(bpy.context.selected_objects)>0:
-        export_objects(os.path.join(export_folder, base_name + "-rest.dae"))
-    
-    bpy.ops.object.select_all(action='DESELECT')
+        ## Export the rest if objects not in the list above in one file    
+        bpy.ops.object.select_all(action='SELECT')
+        for obj in objects:
+            obj.select_set(False)
+        if len(bpy.context.selected_objects)>0:
+            export_objects(os.path.join(export_folder, base_name + "-rest.dae"))
+        
+    if not individual: 
+        bpy.ops.object.select_all(action='DESELECT')

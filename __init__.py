@@ -33,27 +33,29 @@ bl_info = {
     "category": "User"
 }
 
-class Z_ExportAll(Operator):
-    bl_idname = "ztools.export_all"
+class Z_ExportIndividual(Operator):
+    """ Export selected objects to "output" folder into multiple .dae files"""
+    bl_idname = "ztools.export_individual"
     bl_label = "Export Individual"
 
     def execute(self, context):
         # Add code here to define what the operator should do
-        z_export_all.export_all_opensim(individual=True)
+        z_export_all.export_opensim(individual=True)
         return {'FINISHED'}
 
-class Z_ExportAllGouped(Operator):
+class Z_ExportGrouped(Operator):
+    """ Export all object based on FaceMap "Convex" to "output" folder into 3 .dae files"""
     bl_idname = "ztools.export_all_grouped"
     bl_label = "Export Grouped"
 
     def execute(self, context):
         # Add code here to define what the operator should do
-        z_export_all.export_all_opensim(individual=False)
+        z_export_all.export_opensim(individual=False)
         return {'FINISHED'}
 
-class Z_Export_Panel(Panel):
+class Z_OpenSIM_Panel(Panel):
     bl_idname = "VIEW_3D_PT_z_exprot_tools"
-    bl_label = "Export Tools"
+    bl_label = "OpenSIM"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = "Z Tools"
@@ -71,13 +73,14 @@ class Z_Export_Panel(Panel):
         
         row = layout.column(align=True)
         #row = col.row(align=True)
-        row.operator(Z_ExportAll.bl_idname, text=Z_ExportAll.bl_label, icon="EXPORT")
+        row.operator(Z_ExportIndividual.bl_idname, text=Z_ExportIndividual.bl_label, icon="EXPORT")
 
         row = layout.column(align=True)
         #row = col.row(align=True)
-        row.operator(Z_ExportAllGouped.bl_idname, text=Z_ExportAllGouped.bl_label, icon="EXPORT")
+        row.operator(Z_ExportGrouped.bl_idname, text=Z_ExportGrouped.bl_label, icon="EXPORT")
 
 class Z_CreateConvex(Operator):
+    """Create objects from current object that have "Convex" FaceMap, only using faces in this FaceMap"""
     bl_idname = "ztools.create_convex"
     bl_label = "Create Convex"
 
