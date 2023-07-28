@@ -15,6 +15,8 @@ Go to on left Panel and find Face Map, Create new map name it "Convex", Assign t
 
 ![Screenshot01](https://i.imgur.com/YsH6CPi.png)
 
+Now press n to see panel of addon, click button "Create Convex", you will have new object with same names added "-Convex" in Convex collection
+
 ![Screenshot01](https://i.imgur.com/UDmglQK.png)
 
 ## Export
