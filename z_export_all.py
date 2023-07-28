@@ -14,20 +14,30 @@ face_map_name = "Convex"
 name_suffex =  "-Convex"
 # Replace these with the names of the objects you want to export
 
-def export_opensim(rename_mesh=True, individual=False):
+def export_opensim(rename_mesh=True, individual=False, operator=None):
 
     if rename_mesh:
+        if individual:
+            objs = bpy.context.selected_objects
+        else: ## All objects
+            objs = bpy.data.objects
+
         ## Correct names of mesh
-        for obj in bpy.data.objects:
-            if obj.data.library is not None:
-                obj.data.name = obj.name                
+        for obj in objs:
+            ## not a cloned/linked
+            #if obj.data.users <= 1:
+
+            ## Only visible objects
+            if obj.visible_get():
+                obj.data.name = obj.name
+
         #    else:
         #        obj.transform_apply(location=True, rotation=True, scale=True, isolate_users=True)
-    
+
     if individual:
         objects = [obj for obj in bpy.context.selected_objects]
     else:                        
-        objects = [obj for obj in bpy.data.objects if face_map_name in obj.face_maps]
+        objects = [obj for obj in bpy.data.objects if obj.visible_get() and (face_map_name in obj.face_maps)]
                     
     #export_preset_name = "My"
 
@@ -62,12 +72,16 @@ def export_opensim(rename_mesh=True, individual=False):
         )        
 
     ## Export Objects that have Convex face map    
-    if individual:        
-        ## Export Objects file for each one
-        for obj in objects:
-            bpy.ops.object.select_all(action='DESELECT')
-            obj.select_set(True)
-            export_objects(os.path.join(export_folder, obj.name + ".dae"))
+    if individual:
+        if len(objects) ==0:
+            if operator!=None:
+                operator.report({'ERROR'}, "Select objects to export!")
+        else:
+            ## Export Objects file for each one
+            for obj in objects:
+                bpy.ops.object.select_all(action='DESELECT')
+                obj.select_set(True)
+                export_objects(os.path.join(export_folder, obj.name + ".dae"))
 
     else:
         ## Export Objects in one files but with end name -Convex in another one files too

@@ -40,7 +40,7 @@ class Z_ExportIndividual(Operator):
 
     def execute(self, context):
         # Add code here to define what the operator should do
-        z_export_all.export_opensim(individual=True)
+        z_export_all.export_opensim(individual=True, operator=self)
         return {'FINISHED'}
 
 class Z_ExportGrouped(Operator):
@@ -50,7 +50,7 @@ class Z_ExportGrouped(Operator):
 
     def execute(self, context):
         # Add code here to define what the operator should do
-        z_export_all.export_opensim(individual=False)
+        z_export_all.export_opensim(individual=False, operator=self)
         return {'FINISHED'}
 
 class Z_OpenSIM_Panel(Panel):
