@@ -9,13 +9,16 @@ This will create a new Object from group of selected faces in Face Map with the 
 New Objects are created in a  new Collection called "Convex"
 
 ### Tutorial
+
 Switch "Edit Mode"
+
 Select faces that you want to make convex from it
-Go to on left Panel and find Face Map, Create new map name it "Convex", Assign this faces to it
+
+Go to on left Panel and find Face Map, Create new map, name it "Convex", Assign this faces to it
 
 ![Screenshot01](https://i.imgur.com/YsH6CPi.png)
 
-Now press n to see panel of addon, click button "Create Convex", you will have new object with same names added "-Convex" in Convex collection
+Now press n to see panel of addon, click button "Create Convex", you will have new objects with same names added "-Convex" in Convex collection
 
 ![Screenshot01](https://i.imgur.com/UDmglQK.png)
 
@@ -27,6 +30,8 @@ Export Individual: Will export each project as DAE file into "output" folder, ea
 
 Export Grouped: Will export to 3 .dea files,
 
-    Objects that have Face Map :  Face Group named "Convex",
-    Objects that created from Face Map:  Face Group, it is a convex mesh for first objects.
-    Objects that doesn't have Face Map:  "Convex", for parts of the object that have no need for a Convex.
+1 - Objects that have Face Map :  Face Group named "Convex",
+
+2 - Objects that created from Face Map:  Face Group, it is a convex mesh for first objects.
+
+3 - Objects that doesn't have Face Map:  "Convex", for parts of the object that have no need for a Convex.
