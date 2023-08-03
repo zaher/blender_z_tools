@@ -13,8 +13,8 @@ import bpy
 import inspect
 import sys
 from bpy.types import Operator
-from bpy.props import FloatVectorProperty
-from bpy.types import Panel
+from bpy.props import (PointerProperty, FloatVectorProperty, BoolProperty)
+from bpy.types import (Panel, PropertyGroup)
 
 from . import z_rename
 from . import z_tool
@@ -32,6 +32,10 @@ bl_info = {
     "wiki_url": "",
     "category": "User"
 }
+
+##
+## Export
+##
 
 class Z_ExportIndividual(Operator):
     """ Export selected objects to "output" folder into multiple .dae files"""
@@ -54,13 +58,13 @@ class Z_ExportGrouped(Operator):
         return {'FINISHED'}
 
 class Z_OpenSIM_Panel(Panel):
-    bl_idname = "VIEW_3D_PT_z_exprot_tools"
+    bl_idname = "VIEW_3D_PT_z_export_tools"
     bl_label = "OpenSIM"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = "Z Tools"
     bl_context = "objectmode" 
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'HEADER_LAYOUT_EXPAND'}
 
 #    @classmethod
 #    def poll(self,context):
@@ -79,14 +83,28 @@ class Z_OpenSIM_Panel(Panel):
         #row = col.row(align=True)
         row.operator(Z_ExportGrouped.bl_idname, text=Z_ExportGrouped.bl_label, icon="EXPORT")
 
+##
+## Convex
+##
+
+class Z_ConvexSettings(PropertyGroup):
+    selected_only : BoolProperty(
+        name="Enable or Disable",
+        description="A bool property",
+        default = False
+    )
+
 class Z_CreateConvex(Operator):
     """Create objects from current object that have "Convex" FaceMap, only using faces in this FaceMap"""
     bl_idname = "ztools.create_convex"
     bl_label = "Create Convex"
 
+    selected_only: bpy.props.BoolProperty(name="selected_only", description="Selected Only", default=False)
+
     def execute(self, context):
         # Add code here to define what the operator should do
-        z_create_convex.create_convex()
+        #preferences = context.preferences.addons[Z_ToolsPreferences.bl_idname].preferences
+        z_create_convex.create_convex(selected_only = context.scene.z_convex_settings.selected_only)
         return {'FINISHED'}
 
 class Z_Mesh_Panel(Panel):
@@ -96,7 +114,7 @@ class Z_Mesh_Panel(Panel):
     bl_region_type = 'UI'
     bl_category = "Z Tools"
     bl_context = "objectmode" 
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'HEADER_LAYOUT_EXPAND'}
 
 #    @classmethod
 #    def poll(self,context):
@@ -104,17 +122,27 @@ class Z_Mesh_Panel(Panel):
 
     def draw(self, context):
         layout = self.layout
+        z_convex_settings = context.scene.z_convex_settings
 
-        layout.label(text="Mesh:")
+        layout.label(text="Convex:")
         
-        row = layout.column(align=True)
+        row = layout.row(align=True)
+        # display the properties
+        row.prop(z_convex_settings, "selected_only", text="Selected Only")
+        row = layout.row(align=True)
+        #row.separator_spacer()
         #row = col.row(align=True)
         row.operator(Z_CreateConvex.bl_idname, text=Z_CreateConvex.bl_label)
+##        op.selected_only =
+
+##
+## Addon
+##
 
 current_module = sys.modules[__name__]
 classes = inspect.getmembers(current_module, predicate=inspect.isclass)
 
-def z_register():    
+def z_register():
     for name, cls in classes:
         if hasattr(cls, 'bl_idname'):     
             bpy.utils.register_class(cls)
@@ -125,10 +153,14 @@ def z_unregister():
             bpy.utils.unregister_class(cls)
 
 def register():
+    bpy.utils.register_class(Z_ConvexSettings)
     z_register()
+    bpy.types.Scene.z_convex_settings = PointerProperty(type=Z_ConvexSettings)
 
 def unregister():
     z_unregister()
+    del bpy.types.Scene.z_convex_settings
+    bpy.utils.unregister_class(Z_ConvexSettings)
 
 if __name__ == "__main__":
     register()

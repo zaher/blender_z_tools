@@ -11,7 +11,7 @@ import os
 from bl_ui.utils import PresetPanel
 from bpy.types import Panel, Menu
 
-def create_convex():
+def create_convex(selected_only = False):
     face_map_name = "Convex"
     collection_convex_name = "Convex"
     name_suffex = "-Convex"
@@ -26,14 +26,21 @@ def create_convex():
     if bpy.context.mode != "OBJECT":
         bpy.ops.object.mode_set(mode='OBJECT')
 
-    bpy.ops.object.select_all(action='DESELECT')
-
     ## Collect objects that have facemap named "Convex"
-    convexObjects = [obj for obj in bpy.data.objects if (not obj.name.endswith(name_suffex)) and face_map_name in obj.face_maps]
+    if selected_only:
+        objs = bpy.context.selected_objects
+    else:
+        objs = bpy.data.objects
+        #objs = bpy.context.scene.objects
+
+    convexObjects = [obj for obj in objs if (not obj.name.endswith(name_suffex)) and face_map_name in obj.face_maps]
+
+    bpy.ops.object.select_all(action='DESELECT')
 
     for obj in convexObjects:
         
         new_name = obj.name + name_suffex
+        ## Find the new name if exists we will delete the old one
         if new_name in bpy.data.objects:
             new_obj = bpy.data.objects[new_name]
             bpy.data.objects.remove(new_obj, do_unlink=True)
