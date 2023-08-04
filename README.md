@@ -24,7 +24,7 @@ Now press n to see panel of addon, click button "Create Convex", you will have n
 
 Creating Convex Example:
 
-![Imgur](https://i.imgur.com/qq9xYsJ.gifv)
+![Imgur](https://i.imgur.com/qq9xYsJ.gif)
 
 ## Export
 
