@@ -22,6 +22,10 @@ Now press n to see panel of addon, click button "Create Convex", you will have n
 
 ![Screenshot01](https://i.imgur.com/UDmglQK.png)
 
+Creating Convex Example:
+
+![Imgur](https://i.imgur.com/qq9xYsJ.gifv)
+
 ## Export
 
 Export functions will fix mesh name to the same name of object name, this help OpenSIM handle the linkset
