@@ -11,10 +11,12 @@ from bl_ui.utils import PresetPanel
 from bpy.types import Panel, Menu
 
 face_map_name = "Convex"
-name_suffex =  "-Convex"
+name_suffex =  "-"+face_map_name;
 # Replace these with the names of the objects you want to export
 
-def export_opensim(rename_mesh=True, individual=False, operator=None):
+def export_opensim(rename_mesh=True, individual=False, by_collections = False, operator=None):
+
+    exported_count = 0;
 
     if rename_mesh:
         if individual:
@@ -41,18 +43,23 @@ def export_opensim(rename_mesh=True, individual=False, operator=None):
                     
     #export_preset_name = "My"
 
-    # Replace this with the path to the folder where you want to export the DAE files
+    ## Replace this with the path to the folder where you want to export the DAE files
     export_folder = os.path.dirname(bpy.data.filepath)+"/output/"
     base_name = os.path.splitext(os.path.basename(bpy.data.filepath))[0]
 
     if not os.path.exists(export_folder):
         os.makedirs(export_folder)
 
-    # Create the export folder if it doesn't exist
+    ## Create the export folder if it doesn't exist
     if not os.path.exists(export_folder):
         os.makedirs(export_folder)
 
     def export_objects(export_file):
+
+        nonlocal exported_count
+
+        exported_count = exported_count + 1
+
         bpy.ops.wm.collada_export(
             filepath=export_file,
             selected=True, 
@@ -71,7 +78,7 @@ def export_opensim(rename_mesh=True, individual=False, operator=None):
             use_object_instantiation=True        
         )        
 
-    ## Export Objects that have Convex face map    
+    ## Export Objects that have Convex face map
     if individual:
         if len(objects) ==0:
             if operator!=None:
@@ -84,27 +91,45 @@ def export_opensim(rename_mesh=True, individual=False, operator=None):
                 export_objects(os.path.join(export_folder, obj.name + ".dae"))
 
     else:
-        ## Export Objects in one files but with end name -Convex in another one files too
-        bpy.ops.object.select_all(action='DESELECT')
-        for obj in objects:
-            if not obj.name.endswith(name_suffex):
-                obj.select_set(True)
-        if len(bpy.context.selected_objects)>0:
-            export_objects(os.path.join(export_folder, base_name + ".dae"))
+        if by_collections:
+            for collection in bpy.data.collections:
+                bpy.ops.object.select_all(action='DESELECT')
+                for obj in collection.all_objects:
+                    obj.select_set(True)
+            #for collection_name in bpy.data.collections:
+                #if collection_name in [c.name for c in obj.users_collection]:
+                #    obj.select_set(True)
+            #if len(bpy.context.selected_objects)>0:
+                if len(bpy.context.selected_objects)>0:
+                    export_objects(os.path.join(export_folder, collection.name + ".dae"))
 
-        bpy.ops.object.select_all(action='DESELECT')
-        for obj in objects:
-            if obj.name.endswith(name_suffex):
-                obj.select_set(True)
-        if len(bpy.context.selected_objects)>0:
-            export_objects(os.path.join(export_folder, base_name + "-convex.dae"))
+        else:
+            ## Export Objects in one files but with end name -Convex in another one files too
+            bpy.ops.object.select_all(action='DESELECT')
+            for obj in objects:
+                if not obj.name.endswith(name_suffex):
+                    obj.select_set(True)
 
-        ## Export the rest if objects not in the list above in one file    
-        bpy.ops.object.select_all(action='SELECT')
-        for obj in objects:
-            obj.select_set(False)
-        if len(bpy.context.selected_objects)>0:
-            export_objects(os.path.join(export_folder, base_name + "-rest.dae"))
+            if len(bpy.context.selected_objects)>0:
+                export_objects(os.path.join(export_folder, base_name + ".dae"))
+
+            bpy.ops.object.select_all(action='DESELECT')
+
+            for obj in objects:
+                if obj.name.endswith(name_suffex):
+                    obj.select_set(True)
+            if len(bpy.context.selected_objects)>0:
+                export_objects(os.path.join(export_folder, base_name + "-"+face_map_name+".dae"))
+
+            ## Export the rest if objects not in the list above in one file
+            bpy.ops.object.select_all(action='SELECT')
+            for obj in objects:
+                obj.select_set(False)
+            if len(bpy.context.selected_objects)>0:
+                export_objects(os.path.join(export_folder, base_name + "-Rest.dae"))
         
     if not individual: 
         bpy.ops.object.select_all(action='DESELECT')
+
+    if exported_count>0:
+        operator.report({'INFO'}, "Exported Objects: "+str(exported_count))

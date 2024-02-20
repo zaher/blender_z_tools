@@ -9,6 +9,13 @@ thanks to
     https://blender.stackexchange.com/questions/146417/quickest-way-to-create-panel-buttons-with-quick-functionality
 
 """
+if "bpy" in locals():
+    import importlib
+    if "z_create_convex" in locals():
+        importlib.reload(z_create_convex)
+    if "z_export_all" in locals():
+        importlib.reload(z_export_all)
+
 import bpy
 import inspect
 import sys
@@ -50,11 +57,21 @@ class Z_ExportIndividual(Operator):
 class Z_ExportGrouped(Operator):
     """ Export all object based on FaceMap "Convex" to "output" folder into 3 .dae files"""
     bl_idname = "ztools.export_all_grouped"
-    bl_label = "Export Grouped"
+    bl_label = "By Convex"
 
     def execute(self, context):
         # Add code here to define what the operator should do
         z_export_all.export_opensim(individual=False, operator=self)
+        return {'FINISHED'}
+
+class Z_ExportByCollections(Operator):
+    """ Export all object based on collections name "output" folder"""
+    bl_idname = "ztools.export_all_bycollections"
+    bl_label = "By Collections"
+
+    def execute(self, context):
+        # Add code here to define what the operator should do
+        z_export_all.export_opensim(by_collections=True, operator=self)
         return {'FINISHED'}
 
 class Z_OpenSIM_Panel(Panel):
@@ -79,9 +96,15 @@ class Z_OpenSIM_Panel(Panel):
         #row = col.row(align=True)
         row.operator(Z_ExportIndividual.bl_idname, text=Z_ExportIndividual.bl_label, icon="EXPORT")
 
+
+        layout.label(text="Groups:")
+
         row = layout.column(align=True)
         #row = col.row(align=True)
         row.operator(Z_ExportGrouped.bl_idname, text=Z_ExportGrouped.bl_label, icon="EXPORT")
+
+        row = layout.column(align=True)
+        row.operator(Z_ExportByCollections.bl_idname, text=Z_ExportByCollections.bl_label, icon="EXPORT")
 
 ##
 ## Convex
@@ -104,7 +127,7 @@ class Z_CreateConvex(Operator):
     def execute(self, context):
         # Add code here to define what the operator should do
         #preferences = context.preferences.addons[Z_ToolsPreferences.bl_idname].preferences
-        z_create_convex.create_convex(selected_only = context.scene.z_convex_settings.selected_only)
+        z_create_convex.create_convex(selected_only = context.scene.z_convex_settings.selected_only, operator=self)
         return {'FINISHED'}
 
 class Z_Mesh_Panel(Panel):
@@ -124,7 +147,7 @@ class Z_Mesh_Panel(Panel):
         layout = self.layout
         z_convex_settings = context.scene.z_convex_settings
 
-        layout.label(text="Convex:")
+        layout.label(text="Create Convex:")
         
         row = layout.row(align=True)
         # display the properties

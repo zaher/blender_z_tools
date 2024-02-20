@@ -11,10 +11,10 @@ import os
 from bl_ui.utils import PresetPanel
 from bpy.types import Panel, Menu
 
-def create_convex(selected_only = False):
+def create_convex(selected_only = False, operator=None):
     face_map_name = "Convex"
-    collection_convex_name = "Convex"
-    name_suffex = "-Convex"
+    collection_convex_name = face_map_name
+    name_suffex = "-"+face_map_name
 
     #Create _Convex collection
     if collection_convex_name in bpy.data.collections:
@@ -36,7 +36,6 @@ def create_convex(selected_only = False):
     convexObjects = [obj for obj in objs if (not obj.name.endswith(name_suffex)) and face_map_name in obj.face_maps]
 
     bpy.ops.object.select_all(action='DESELECT')
-
     for obj in convexObjects:
         
         new_name = obj.name + name_suffex
@@ -57,36 +56,40 @@ def create_convex(selected_only = False):
         face_map_index = obj.face_maps[face_map_name].index
         face_map = mesh.face_maps[face_map_index] # no name for face map inside mesh
 
+        #operator.report({'INFO'}, "#len mesh.face_maps"+str(len(mesh.face_maps)))
         ## MUST BE in Object mode
         face_map_index = obj.face_maps[face_map_name].index
         face_map = mesh.face_maps[face_map_index] # no name for face map inside mesh
 
-        process = False
-        
-        for i, fm_data in enumerate(face_map.data):
-            # fm_data.value can be either -1 (unassigned) or the index of the face map it is assigned to
-            selected = fm_data.value == face_map_index
-            f = mesh.polygons[i]
-            f.select = selected # Select the face, maybe we do not need it
-            process = True
+        if len(face_map.data)>0:
 
-        if process:
-            ## to find the new object that separated we save old objects
-            old_selected = [o for o in bpy.context.scene.objects]
+            process = False #check if we have faces in facemap
+            ## Select all faces in that facemap
+            for i, fm_data in enumerate(face_map.data):
+                # fm_data.value can be either -1 (unassigned) or the index of the face map it is assigned to
+                select_it = fm_data.value == face_map_index
+                if select_it:
+                    f = mesh.polygons[i]
+                    f.select = True # Select the face, maybe we do not need it
+                    process = True
 
-            bpy.ops.object.mode_set(mode='EDIT')
-            bpy.ops.mesh.duplicate(mode=1)
-            bpy.ops.mesh.separate(type='SELECTED')
+            if process:
+                ## to find the new object that separated we save old objects
+                old_selected = [o for o in bpy.context.scene.objects]
 
-            ## now we compare new objects with old to find new object created by separate
-            cur_selected = [o for o in bpy.context.scene.objects]
-            new_obj = [o for o in cur_selected if o not in old_selected][0]
+                bpy.ops.object.mode_set(mode='EDIT')
+                bpy.ops.mesh.duplicate(mode=1)
+                bpy.ops.mesh.separate(type='SELECTED')
 
-            ## Moving it to new collection
-            for coll in new_obj.users_collection:
-                coll.objects.unlink(new_obj)
+                ## now we compare new objects with old to find new object created by separate
+                cur_selected = [o for o in bpy.context.scene.objects]
+                new_obj = [o for o in cur_selected if o not in old_selected][0]
 
-            new_obj.name = new_name
-            new_obj.data.name = new_obj.name
-            convex_collection.objects.link(new_obj)
-            bpy.ops.object.mode_set(mode='OBJECT')
+                ## Moving it to new collection
+                for coll in new_obj.users_collection:
+                    coll.objects.unlink(new_obj)
+
+                new_obj.name = new_name
+                new_obj.data.name = new_obj.name
+                convex_collection.objects.link(new_obj)
+                bpy.ops.object.mode_set(mode='OBJECT')
