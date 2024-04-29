@@ -60,22 +60,27 @@ def export_opensim(rename_mesh=True, individual=False, by_collections = False, o
 
         exported_count = exported_count + 1
 
+        ## https://docs.blender.org/api/current/bpy.ops.wm.html
         bpy.ops.wm.collada_export(
             filepath=export_file,
-            selected=True, 
-            apply_modifiers=True, 
-            open_sim=True, 
+            selected=True,
+            open_sim=True,
+            limit_precision=True,
+            triangulate=True, ## Because FS/OS can have wrong tries
+            apply_modifiers=True,
             keep_bind_info=True,
-            include_children=True,
-            # export_object_transformation_type_selection='decomposed', ## ---nop---need it for scale -1 for some linked objects
-            # apply_global_orientation=True, ## idk
+            include_children=True, ##Rig
+            #include_armatures=True, ##Rig
+            # export_object_transformation_type_selection='decomposed', ## ---nope---need it for scale -1 for some linked objects
+            export_object_transformation_type_selection='matrix',
             use_texture_copies=True,
             #export_texture_type='COPY',
-            sort_by_name=True,        
-            export_global_forward_selection='Y',
+            sort_by_name=True,
+            apply_global_orientation=True,
+            export_global_forward_selection='-X',
             export_global_up_selection='Z',
             export_mesh_type_selection='view',
-            use_object_instantiation=True        
+            use_object_instantiation=False ## False we can have bug in cloned objects when uploaded
         )        
 
     ## Export Objects that have Convex face map
