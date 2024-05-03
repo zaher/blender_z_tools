@@ -14,19 +14,15 @@ Switch to "Edit Mode"
 
 Select faces that you want to make convex from it
 
-Show "Z Tools" addon panel (click n), Click "Assign To Convex"
-
-![Screenshot01](https://i.imgur.com/YsH6CPi.png)
+Show "Z Tools" addon panel (press n), Click "Assign To Convex"
 
 Switch to "Object Mode"
 
 In addon panel (press n to show), click button "Create Convex", you will have new objects with same names added "-Convex" in Convex collection
 
-![Screenshot01](https://i.imgur.com/UDmglQK.png)
-
 Creating Convex Example:
 
-![Imgur](https://i.imgur.com/qq9xYsJ.gif)
+![Imgur](https://i.imgur.com/OTTdBNW.gif)
 
 ## Export DAE
 
