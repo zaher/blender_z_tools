@@ -9,11 +9,11 @@ from bpy.props import FloatVectorProperty
 from mathutils import Vector
 
 class OBJECT_OT_C2Mesh_modifier(bpy.types.Operator):
-    bl_idname = "object.convrt_to_mesh"
+    bl_idname = "object.convert_to_mesh"
     bl_label = "Convert To Mesh"
     bl_description = "Convert Curve to Mesh"
     bl_options = {'REGISTER', 'UNDO'}
-
+    
     def execute(self, context):
         obj = context.object
         mod = obj.modifiers.new(name="ConvertToMesh", type='SUBSURF')

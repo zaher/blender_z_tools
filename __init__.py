@@ -31,8 +31,8 @@ from . import z_export_all
 bl_info = {
     "name": "Z Tools",
     "author": "Zaher Dirkey",
-    "version": (1, 2),
-    "blender": (3, 4, 0),
+    "version": (1, 3),
+    "blender": (4, 0, 0),
     "location": "View3D > Object > Z Tools > ",
     "description": "Z Tools",
     "warning": "",
@@ -55,7 +55,7 @@ class Z_ExportIndividual(Operator):
         return {'FINISHED'}
 
 class Z_ExportGrouped(Operator):
-    """ Export all object based on FaceMap "Convex" to "output" folder into 3 .dae files"""
+    """ Export all object based on "Convex" to "output" folder into 3 .dae files"""
     bl_idname = "ztools.export_all_grouped"
     bl_label = "By Convex"
 
@@ -75,6 +75,7 @@ class Z_ExportByCollections(Operator):
         return {'FINISHED'}
 
 class Z_OpenSIM_Panel(Panel):
+
     bl_idname = "VIEW_3D_PT_z_export_tools"
     bl_label = "OpenSIM"
     bl_space_type = 'VIEW_3D'
@@ -90,21 +91,21 @@ class Z_OpenSIM_Panel(Panel):
     def draw(self, context):
         layout = self.layout
 
-        layout.label(text="Export:")
-        
+        layout.label(text="Export Selected:")
+
         row = layout.column(align=True)
         #row = col.row(align=True)
         row.operator(Z_ExportIndividual.bl_idname, text=Z_ExportIndividual.bl_label, icon="EXPORT")
 
 
-        layout.label(text="Groups:")
+        layout.label(text="Export Groups:")
+
+        row = layout.column(align=True)
+        row.operator(Z_ExportByCollections.bl_idname, text=Z_ExportByCollections.bl_label, icon="EXPORT")
 
         row = layout.column(align=True)
         #row = col.row(align=True)
         row.operator(Z_ExportGrouped.bl_idname, text=Z_ExportGrouped.bl_label, icon="EXPORT")
-
-        row = layout.column(align=True)
-        row.operator(Z_ExportByCollections.bl_idname, text=Z_ExportByCollections.bl_label, icon="EXPORT")
 
 ##
 ## Convex
@@ -117,8 +118,48 @@ class Z_ConvexSettings(PropertyGroup):
         default = False
     )
 
-class Z_CreateConvex(Operator):
-    """Create objects from current object that have "Convex" FaceMap, only using faces in this FaceMap"""
+class Convex(bpy.types.PropertyGroup):
+    faces = []
+    enums = bpy.props.EnumProperty(name="Faces", items=faces)
+
+class Z_AssignToConvex(Operator):
+    """Assign Faces to Convex"""
+    bl_idname = "ztools.assign_to_convex"
+    bl_label = "Assign to Convex"
+
+    def execute(self, context):
+        z_create_convex.assign_convex_faces(True)
+        return {'FINISHED'}
+
+class Z_RemoveFromConvex(Operator):
+    """Remove Faces from Convex"""
+    bl_idname = "ztools.remove_from_convex"
+    bl_label = "Remove From Convex"
+
+    def execute(self, context):
+        z_create_convex.assign_convex_faces(False)
+        return {'FINISHED'}
+
+class Z_SelectConvex(Operator):
+    """Select Faces Convex"""
+    bl_idname = "ztools.select_convex"
+    bl_label = "Select Convex"
+
+    def execute(self, context):
+        z_create_convex.select_convex_faces(True)
+        return {'FINISHED'}
+
+class Z_DeselectConvex(Operator):
+    """Deselect Faces Convex"""
+    bl_idname = "ztools.deselect_convex"
+    bl_label = "Deselect Convex"
+
+    def execute(self, context):
+        z_create_convex.select_convex_faces(False)
+        return {'FINISHED'}
+
+class Z_CreateConvexMesh(Operator):
+    """Create objects from current object that have "Convex", only using faces assigned to convex"""
     bl_idname = "ztools.create_convex"
     bl_label = "Create Convex"
 
@@ -127,16 +168,17 @@ class Z_CreateConvex(Operator):
     def execute(self, context):
         # Add code here to define what the operator should do
         #preferences = context.preferences.addons[Z_ToolsPreferences.bl_idname].preferences
-        z_create_convex.create_convex(selected_only = context.scene.z_convex_settings.selected_only, operator=self)
+        z_create_convex.create_convex_mesh(selected_only = context.scene.z_convex_settings.selected_only, operator=self)
         return {'FINISHED'}
 
-class Z_Mesh_Panel(Panel):
-    bl_idname = "VIEW_3D_PT_z_mesh_tools"
-    bl_label = "Mesh Tools"
+class Z_Convex_Edit_Panel(Panel):
+
+    bl_idname = "VIEW_3D_PT_z_convex_edit_panel"
+    bl_label = "Edit Convex"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = "Z Tools"
-    bl_context = "objectmode" 
+    bl_context = "mesh_edit"
     bl_options = {'HEADER_LAYOUT_EXPAND'}
 
 #    @classmethod
@@ -144,18 +186,56 @@ class Z_Mesh_Panel(Panel):
 #        return context.object is not None
 
     def draw(self, context):
+
         layout = self.layout
-        z_convex_settings = context.scene.z_convex_settings
+
+        if z_create_convex.has_convex():
+            layout.label(text="Convex Faces: Has Convex")
+        else:
+            layout.label(text="Convex Faces: None")
+
+        row = layout.row(align=True)
+        row.operator(Z_AssignToConvex.bl_idname, text=Z_AssignToConvex.bl_label)
+        row = layout.row(align=True)
+        row.operator(Z_RemoveFromConvex.bl_idname, text=Z_RemoveFromConvex.bl_label)
+
+        layout.label(text="Selecting:")
+
+        row = layout.row(align=True)
+        row.operator(Z_SelectConvex.bl_idname, text=Z_SelectConvex.bl_label)
+        row = layout.row(align=True)
+        row.operator(Z_DeselectConvex.bl_idname, text=Z_DeselectConvex.bl_label)
+        row = layout.row(align=True)
+
+class Z_Convex_Panel(Panel):
+
+    bl_idname = "VIEW_3D_PT_z_convex_panel"
+    bl_label = "Convex"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = "Z Tools"
+    bl_context = "objectmode"
+    bl_options = {'HEADER_LAYOUT_EXPAND'}
+
+#    @classmethod
+#    def poll(self,context):
+#        return context.object is not None
+
+    def draw(self, context):
+
+        layout = self.layout
 
         layout.label(text="Create Convex:")
-        
+
+        z_convex_settings = context.scene.z_convex_settings
+
         row = layout.row(align=True)
         # display the properties
         row.prop(z_convex_settings, "selected_only", text="Selected Only")
         row = layout.row(align=True)
         #row.separator_spacer()
         #row = col.row(align=True)
-        row.operator(Z_CreateConvex.bl_idname, text=Z_CreateConvex.bl_label)
+        row.operator(Z_CreateConvexMesh.bl_idname, text=Z_CreateConvexMesh.bl_label)
 ##        op.selected_only =
 
 ##
