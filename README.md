@@ -22,7 +22,8 @@ In addon panel (press n to show), click button "Create Convex", you will have ne
 
 Creating Convex Example:
 
-![Imgur](https://i.imgur.com/OTTdBNW.gif)
+![Imgur](https://imgur.com/a/OTTdBNW)
+
 
 ## Export DAE
 
