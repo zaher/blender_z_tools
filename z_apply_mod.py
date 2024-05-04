@@ -1,4 +1,7 @@
-"""Module Blender Z Tools."""
+"""
+    Module Blender Apply Modifier.
+"""
+
 #* https://docs.blender.org/api/2.79/bpy.ops.object.html
 #* https://blenderartists.org/t/renaming-bone-script/1299862/5
 

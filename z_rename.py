@@ -3,6 +3,7 @@
     @licesnse: MPL
 
     Module Blender Z Tools Rename Bones.
+    Beta
 """
 
 #* https://docs.blender.org/api/2.79/bpy.ops.object.html
@@ -14,24 +15,24 @@ from bpy.props import FloatVectorProperty
 #from bpy_extras.object_utils import AddObjectHelper, object_data_add
 from mathutils import Vector
 
-class OBJ_Z_Tools(bpy.types.Menu):
-    bl_idname = "OBJ_Z_Tools" #same as class name
+class OBJ_Z_ApplyMod(bpy.types.Menu):
+    bl_idname = "OBJ_Z_ApplyMod" #same as class name
     bl_label = "Z Tools"
 
     def draw(self, context):
         layout = self.layout
 
-def OBJ_Z_Tools_menu(self, context):
+def OBJ_Z_ApplyMod_menu(self, context):
     self.layout.menu(
-        OBJ_Z_Tools.bl_idname,
-        text=OBJ_Z_Tools.bl_label
+        OBJ_Z_ApplyMod.bl_idname,
+        text=OBJ_Z_ApplyMod.bl_label
     )
 
 ## Rename Bones
 
 class Rename_bones(Operator):
 
-    bl_idname = "object.zt_rename_bones"
+    bl_idname = "object.z_rename_bones"
     bl_label = "Rename VRoid Bones"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -146,7 +147,7 @@ def rename_bones_menu(self, context):
 
 class Export_bones(Operator):
 
-    bl_idname = "object.zt_export_bones"
+    bl_idname = "object.z_export_bones"
     bl_label = "Export Bones"
     bl_options = {'REGISTER', 'UNDO'}
     filepath = bpy.props.StringProperty(subtype="FILE_PATH")
@@ -183,21 +184,21 @@ def export_bones_menu(self, context):
 ## Registration
 
 def register():
-    bpy.utils.register_class(OBJ_Z_Tools)
-    bpy.types.VIEW3D_MT_object.append(OBJ_Z_Tools_menu)
+    bpy.utils.register_class(OBJ_Z_ApplyMod)
+    bpy.types.VIEW3D_MT_object.append(OBJ_Z_ApplyMod_menu)
 
     bpy.utils.register_class(Rename_bones)
-    bpy.types.OBJ_Z_Tools.append(rename_bones_menu)
+    bpy.types.OBJ_Z_ApplyMod.append(rename_bones_menu)
 
     bpy.utils.register_class(Export_bones)
-    bpy.types.OBJ_Z_Tools.append(export_bones_menu)
+    bpy.types.OBJ_Z_ApplyMod.append(export_bones_menu)
 
 def unregister():
-    bpy.types.OBJ_Z_Tools.remove(export_bones_menu)
+    bpy.types.OBJ_Z_ApplyMod.remove(export_bones_menu)
     bpy.utils.unregister_class(Export_bones)
 
-    bpy.types.OBJ_Z_Tools.remove(rename_bones_menu)
+    bpy.types.OBJ_Z_ApplyMod.remove(rename_bones_menu)
     bpy.utils.unregister_class(Rename_bones)
 
-    bpy.types.VIEW3D_MT_object.remove(OBJ_Z_Tools_menu)
-    bpy.utils.unregister_class(OBJ_Z_Tools)
+    bpy.types.VIEW3D_MT_object.remove(OBJ_Z_ApplyMod_menu)
+    bpy.utils.unregister_class(OBJ_Z_ApplyMod)
