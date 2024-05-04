@@ -23,20 +23,18 @@ from bpy.types import Operator
 from bpy.props import (PointerProperty, FloatVectorProperty, BoolProperty)
 from bpy.types import (Panel, PropertyGroup)
 
-from . import z_rename
-from . import z_tool
 from . import z_create_convex
 from . import z_export_all
 
 bl_info = {
     "name": "Z Tools",
     "author": "Zaher Dirkey",
-    "version": (1, 3),
+    "version": (2, 0),
     "blender": (4, 0, 0),
-    "location": "View3D > Object > Z Tools > ",
+    "location": "Addons Z Tools Panel (press n)",
     "description": "Z Tools",
     "warning": "",
-    "wiki_url": "",
+    "wiki_url": "https://github.com/zaher/blender_z_tools",
     "category": "User"
 }
 
