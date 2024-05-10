@@ -16,7 +16,7 @@ convex_name = "z_convex"
 name_suffex =  "-Convex";
 ## Replace these with the names of the objects you want to export
 
-def export_opensim(rename_mesh=True, individual=False, by_collections = False, operator=None):
+def export_opensim(rename_mesh=True, grouped=False, individual=False, by_collections = False, operator=None):
 
     exported_count = 0;
 
@@ -50,6 +50,14 @@ def export_opensim(rename_mesh=True, individual=False, by_collections = False, o
     if not os.path.exists(export_folder):
         os.makedirs(export_folder)
 
+    def extend_filename(extend):
+        if extend == "":
+            return base_name
+        if base_name[0].isupper():
+            return base_name + "-" + extend.title()
+        else:
+            return base_name + "-" + extend.lower()
+
     def export_objects(export_file):
 
         nonlocal exported_count
@@ -80,13 +88,16 @@ def export_opensim(rename_mesh=True, individual=False, by_collections = False, o
         )        
 
     ## Export Objects that have Convex
-    if individual:
-        ## Export Objects file for each one
-        for obj in selected_objects:
-            if (obj.type == "MESH") and obj.visible_get():
-                bpy.ops.object.select_all(action='DESELECT')
-                obj.select_set(True)
-                export_objects(os.path.join(export_folder, obj.name + ".dae"))
+    if not grouped:
+        if individual:
+            ## Export Objects file for each one
+            for obj in selected_objects:
+                if (obj.type == "MESH") and obj.visible_get():
+                    bpy.ops.object.select_all(action='DESELECT')
+                    obj.select_set(True)
+                    export_objects(os.path.join(export_folder, obj.name + ".dae"))
+        else:
+            export_objects(os.path.join(export_folder, base_name + ".dae"))
 
     else: ## Grouped
         if by_collections: ## by Collection
@@ -118,7 +129,7 @@ def export_opensim(rename_mesh=True, individual=False, by_collections = False, o
                 if obj.name.endswith(name_suffex):
                     obj.select_set(True)
             if len(bpy.context.selected_objects)>0:
-                export_objects(os.path.join(export_folder, base_name + name_suffex +".dae"))
+                export_objects(os.path.join(export_folder, extend_filename("convex") + ".dae"))
 
             ## Export the rest if objects not in the list above in one file
             bpy.ops.object.select_all(action='DESELECT')
@@ -126,9 +137,9 @@ def export_opensim(rename_mesh=True, individual=False, by_collections = False, o
                 if not obj.name.endswith(name_suffex) and not (convex_name in obj.data.attributes):
                     obj.select_set(True)
             if len(bpy.context.selected_objects)>0:
-                export_objects(os.path.join(export_folder, base_name + "-Rest.dae"))
+                export_objects(os.path.join(export_folder, extend_filename("rest") + ".dae"))
         
-    if not individual: 
+    if grouped: 
         bpy.ops.object.select_all(action='DESELECT')
 
     if exported_count>0:

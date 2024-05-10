@@ -25,6 +25,7 @@ from bpy.types import (Panel, PropertyGroup)
 
 from . import z_create_convex
 from . import z_export_all
+from . import z_bones
 
 bl_info = {
     "name": "Z Tools",
@@ -41,6 +42,16 @@ bl_info = {
 ##
 ## Export
 ##
+
+class Z_ExportSingle(Operator):
+    """ Export selected objects to "output" folder into one .dae files"""
+    bl_idname = "ztools.export_single"
+    bl_label = "Export Single"
+
+    def execute(self, context):
+        # Add code here to define what the operator should do
+        z_export_all.export_opensim(individual=False, operator=self)
+        return {'FINISHED'}
 
 class Z_ExportIndividual(Operator):
     """ Export selected objects to "output" folder into multiple .dae files"""
@@ -59,7 +70,7 @@ class Z_ExportGrouped(Operator):
 
     def execute(self, context):
         # Add code here to define what the operator should do
-        z_export_all.export_opensim(individual=False, operator=self)
+        z_export_all.export_opensim(grouped=True, operator=self)
         return {'FINISHED'}
 
 class Z_ExportByCollections(Operator):
@@ -69,7 +80,7 @@ class Z_ExportByCollections(Operator):
 
     def execute(self, context):
         # Add code here to define what the operator should do
-        z_export_all.export_opensim(by_collections=True, operator=self)
+        z_export_all.export_opensim(grouped=True, by_collections=True, operator=self)
         return {'FINISHED'}
 
 class Z_OpenSIM_Panel(Panel):
@@ -92,9 +103,9 @@ class Z_OpenSIM_Panel(Panel):
         layout.label(text="Export Selected:")
 
         row = layout.column(align=True)
-        #row = col.row(align=True)
+        row.operator(Z_ExportSingle.bl_idname, text=Z_ExportSingle.bl_label, icon="EXPORT")
+        row = layout.column(align=True)
         row.operator(Z_ExportIndividual.bl_idname, text=Z_ExportIndividual.bl_label, icon="EXPORT")
-
 
         layout.label(text="Export Groups:")
 
@@ -111,8 +122,8 @@ class Z_OpenSIM_Panel(Panel):
 
 class Z_ConvexSettings(PropertyGroup):
     selected_only : BoolProperty(
-        name="Enable or Disable",
-        description="A bool property",
+        name="convext_options",
+        description="Convex creating options",
         default = False
     )
 
@@ -265,3 +276,4 @@ def unregister():
 
 if __name__ == "__main__":
     register()
+    z_bones.register();
