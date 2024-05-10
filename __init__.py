@@ -43,14 +43,21 @@ bl_info = {
 ## Export
 ##
 
+class Z_ExportSettings(PropertyGroup):
+    selected_only : BoolProperty(
+        name="export_options",
+        description="Export options",
+        default = False
+    )
+
 class Z_ExportSingle(Operator):
     """ Export selected objects to "output" folder into one .dae files"""
     bl_idname = "ztools.export_single"
     bl_label = "Export Single"
 
     def execute(self, context):
-        # Add code here to define what the operator should do
-        z_export_all.export_opensim(individual=False, operator=self)
+        selected_only = context.scene.z_export_settings.selected_only
+        z_export_all.export_opensim(selected_only=selected_only, individual=False, operator=self)
         return {'FINISHED'}
 
 class Z_ExportIndividual(Operator):
@@ -59,8 +66,8 @@ class Z_ExportIndividual(Operator):
     bl_label = "Export Individual"
 
     def execute(self, context):
-        # Add code here to define what the operator should do
-        z_export_all.export_opensim(individual=True, operator=self)
+        selected_only = context.scene.z_export_settings.selected_only
+        z_export_all.export_opensim(selected_only=selected_only, individual=True, operator=self)
         return {'FINISHED'}
 
 class Z_ExportGrouped(Operator):
@@ -69,8 +76,8 @@ class Z_ExportGrouped(Operator):
     bl_label = "By Convex"
 
     def execute(self, context):
-        # Add code here to define what the operator should do
-        z_export_all.export_opensim(grouped=True, operator=self)
+        selected_only = context.scene.z_export_settings.selected_only
+        z_export_all.export_opensim(selected_only=selected_only, grouped=True, operator=self)
         return {'FINISHED'}
 
 class Z_ExportByCollections(Operator):
@@ -79,8 +86,8 @@ class Z_ExportByCollections(Operator):
     bl_label = "By Collections"
 
     def execute(self, context):
-        # Add code here to define what the operator should do
-        z_export_all.export_opensim(grouped=True, by_collections=True, operator=self)
+        selected_only = context.scene.z_export_settings.selected_only
+        z_export_all.export_opensim(selected_only=selected_only, grouped=True, by_collections=True, operator=self)
         return {'FINISHED'}
 
 class Z_OpenSIM_Panel(Panel):
@@ -100,14 +107,20 @@ class Z_OpenSIM_Panel(Panel):
     def draw(self, context):
         layout = self.layout
 
-        layout.label(text="Export Selected:")
+        z_export_settings = context.scene.z_export_settings
+
+        layout.label(text="Export:")
+
+        row = layout.row(align=True)
+        row.prop(z_export_settings, "selected_only", text="Selected Only")
 
         row = layout.column(align=True)
         row.operator(Z_ExportSingle.bl_idname, text=Z_ExportSingle.bl_label, icon="EXPORT")
+
         row = layout.column(align=True)
         row.operator(Z_ExportIndividual.bl_idname, text=Z_ExportIndividual.bl_label, icon="EXPORT")
 
-        layout.label(text="Export Groups:")
+        layout.label(text="As Groups:")
 
         row = layout.column(align=True)
         row.operator(Z_ExportByCollections.bl_idname, text=Z_ExportByCollections.bl_label, icon="EXPORT")
@@ -172,7 +185,7 @@ class Z_CreateConvexMesh(Operator):
     bl_idname = "ztools.create_convex"
     bl_label = "Create Convex"
 
-    selected_only: bpy.props.BoolProperty(name="selected_only", description="Selected Only", default=False)
+    #selected_only: bpy.props.BoolProperty(name="selected_only", description="Selected Only", default=False)
 
     def execute(self, context):
         # Add code here to define what the operator should do
@@ -265,14 +278,18 @@ def z_unregister():
             bpy.utils.unregister_class(cls)
 
 def register():
-    bpy.utils.register_class(Z_ConvexSettings)
+    bpy.utils.register_class(Z_ConvexSettings)    
+    bpy.utils.register_class(Z_ExportSettings)
     z_register()
     bpy.types.Scene.z_convex_settings = PointerProperty(type=Z_ConvexSettings)
+    bpy.types.Scene.z_export_settings = PointerProperty(type=Z_ExportSettings)    
 
 def unregister():
     z_unregister()
     del bpy.types.Scene.z_convex_settings
     bpy.utils.unregister_class(Z_ConvexSettings)
+    del bpy.types.Scene.Z_ExportSettings
+    bpy.utils.unregister_class(Z_ExportSettings)
 
 if __name__ == "__main__":
     register()

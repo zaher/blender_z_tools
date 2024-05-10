@@ -16,11 +16,15 @@ convex_name = "z_convex"
 name_suffex =  "-Convex";
 ## Replace these with the names of the objects you want to export
 
-def export_opensim(rename_mesh=True, grouped=False, individual=False, by_collections = False, operator=None):
+def export_opensim(selected_only=False, rename_mesh=True, grouped=False, individual=False, by_collections = False, operator=None):
 
     exported_count = 0;
+    exported_objects_count = 0;
 
-    selected_objects = [obj for obj in bpy.context.selected_objects if (obj.type == "MESH") and obj.visible_get()]
+    if selected_only:
+        selected_objects = [obj for obj in bpy.context.selected_objects if (obj.type == "MESH") and obj.visible_get()]
+    else:
+        selected_objects = [obj for obj in  bpy.context.scene.objects if (obj.type == "MESH") and obj.visible_get()]
 
     if len(selected_objects) ==0:
         if operator != None:
@@ -60,9 +64,10 @@ def export_opensim(rename_mesh=True, grouped=False, individual=False, by_collect
 
     def export_objects(export_file):
 
-        nonlocal exported_count
+        nonlocal exported_count, exported_objects_count
 
         exported_count = exported_count + 1
+        exported_objects_count = exported_objects_count + len(bpy.context.selected_objects)
 
         ## https://docs.blender.org/api/current/bpy.ops.wm.html
         bpy.ops.wm.collada_export(
@@ -97,6 +102,10 @@ def export_opensim(rename_mesh=True, grouped=False, individual=False, by_collect
                     obj.select_set(True)
                     export_objects(os.path.join(export_folder, obj.name + ".dae"))
         else:
+            bpy.ops.object.select_all(action='DESELECT')
+            for obj in selected_objects:
+                if (obj.type == "MESH") and obj.visible_get():
+                    obj.select_set(True)
             export_objects(os.path.join(export_folder, base_name + ".dae"))
 
     else: ## Grouped
@@ -139,8 +148,7 @@ def export_opensim(rename_mesh=True, grouped=False, individual=False, by_collect
             if len(bpy.context.selected_objects)>0:
                 export_objects(os.path.join(export_folder, extend_filename("rest") + ".dae"))
         
-    if grouped: 
-        bpy.ops.object.select_all(action='DESELECT')
+    bpy.ops.object.select_all(action='DESELECT')
 
     if exported_count>0:
-        operator.report({'INFO'}, "Exported Objects: "+str(exported_count))
+        operator.report({'INFO'}, "Exported: "+str(exported_objects_count)+" into: "+str(exported_count))
