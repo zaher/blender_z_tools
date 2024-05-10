@@ -41,3 +41,7 @@ Export will fix mesh(data) name to the same name of object name, this help OpenS
 3 - Objects that doesn't have Convex:  "Convex", for parts of the object that have no need for a Convex.
 
 **Export by Collections**: Will export to ".dae" files by collections names.
+
+### Notes
+
+Tested and work fine in Blender 3.6

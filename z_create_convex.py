@@ -124,7 +124,7 @@ def create_convex_mesh(selected_only = False, operator=None):
         if bpy.context.mode != "OBJECT":
             bpy.ops.object.mode_set(mode='OBJECT')
 
-        bpy.ops.object.select_all(action='DESELECT')
+        #bpy.ops.object.select_all(action='DESELECT')
 
         for obj in convexObjects:
 
@@ -134,6 +134,7 @@ def create_convex_mesh(selected_only = False, operator=None):
                 new_obj = bpy.data.objects[new_name]
                 bpy.data.objects.remove(new_obj, do_unlink=True)
 
+            bpy.ops.object.select_all(action='DESELECT')
             bpy.context.view_layer.objects.active = obj
             obj.select_set(True)
 
@@ -148,7 +149,7 @@ def create_convex_mesh(selected_only = False, operator=None):
                 ## to find the new object that separated we save old objects
                 old_selected = [o for o in bpy.context.scene.objects]
 
-                bpy.ops.object.mode_set(mode='EDIT')
+                #bpy.ops.object.mode_set(mode='EDIT')
                 bpy.ops.mesh.duplicate(mode=1)
                 bpy.ops.mesh.separate(type='SELECTED')
 

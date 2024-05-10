@@ -15,17 +15,17 @@ from bpy.props import FloatVectorProperty
 #from bpy_extras.object_utils import AddObjectHelper, object_data_add
 from mathutils import Vector
 
-class OBJ_Z_ApplyMod(bpy.types.Menu):
-    bl_idname = "OBJ_Z_ApplyMod" #same as class name
+class OBJ_Z_Bones(bpy.types.Menu):
+    bl_idname = "OBJ_Z_Bones" #same as class name
     bl_label = "Z Tools"
 
     def draw(self, context):
         layout = self.layout
 
-def OBJ_Z_ApplyMod_menu(self, context):
+def OBJ_Z_Bones_menu(self, context):
     self.layout.menu(
-        OBJ_Z_ApplyMod.bl_idname,
-        text=OBJ_Z_ApplyMod.bl_label
+        OBJ_Z_Bones.bl_idname,
+        text=OBJ_Z_Bones.bl_label
     )
 
 ## Rename Bones
@@ -44,7 +44,7 @@ class Rename_bones(Operator):
 
     def execute(self, context):
 
-        dict = {
+        vroid_dict = {
             'Root': 'mPelvis', # mabye leave it as Root
             'J_Bip_C_Hips': '',  # maybe is mPelvis
             'J_Bip_C_Spine': 'mTorso',
@@ -127,13 +127,15 @@ class Rename_bones(Operator):
             'J_Sec_R_TipSleeve': '',
             'J_Sec_R_TipSleeve_end': '',
         }
+
         if hasattr(context.object.data, 'bones'):
+            bones_dict = vroid_dict
             for b in context.object.data.bones:
-                if b.name in dict.keys():
-                    toname = dict[b.name]
+                if b.name in bones_dict.keys():
+                    toname = bones_dict[b.name]
                     if toname != "":
-                        print("renamed: " + b.name + " -> " + dict[b.name])
-                        b.name = dict[b.name]
+                        print("renamed: " + b.name + " -> " + bones_dict[b.name])
+                        b.name = bones_dict[b.name]
 
         return {'FINISHED'}
 
@@ -184,21 +186,21 @@ def export_bones_menu(self, context):
 ## Registration
 
 def register():
-    bpy.utils.register_class(OBJ_Z_ApplyMod)
-    bpy.types.VIEW3D_MT_object.append(OBJ_Z_ApplyMod_menu)
+    bpy.utils.register_class(OBJ_Z_Bones)
+    bpy.types.VIEW3D_MT_object.append(OBJ_Z_Bones_menu)
 
     bpy.utils.register_class(Rename_bones)
-    bpy.types.OBJ_Z_ApplyMod.append(rename_bones_menu)
+    bpy.types.OBJ_Z_Bones.append(rename_bones_menu)
 
     bpy.utils.register_class(Export_bones)
-    bpy.types.OBJ_Z_ApplyMod.append(export_bones_menu)
+    bpy.types.OBJ_Z_Bones.append(export_bones_menu)
 
 def unregister():
-    bpy.types.OBJ_Z_ApplyMod.remove(export_bones_menu)
+    bpy.types.OBJ_Z_Bones.remove(export_bones_menu)
     bpy.utils.unregister_class(Export_bones)
 
-    bpy.types.OBJ_Z_ApplyMod.remove(rename_bones_menu)
+    bpy.types.OBJ_Z_Bones.remove(rename_bones_menu)
     bpy.utils.unregister_class(Rename_bones)
 
-    bpy.types.VIEW3D_MT_object.remove(OBJ_Z_ApplyMod_menu)
-    bpy.utils.unregister_class(OBJ_Z_ApplyMod)
+    bpy.types.VIEW3D_MT_object.remove(OBJ_Z_Bones_menu)
+    bpy.utils.unregister_class(OBJ_Z_Bones)
