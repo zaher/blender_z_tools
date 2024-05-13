@@ -22,9 +22,9 @@ def export_opensim(selected_only=False, rename_mesh=True, grouped=False, individ
     exported_objects_count = 0;
 
     if selected_only:
-        selected_objects = [obj for obj in bpy.context.selected_objects if (obj.type == "MESH") and obj.visible_get()]
+        selected_objects = [obj for obj in bpy.context.selected_objects if ((obj.type == "MESH") or (obj.type == "ARMATURE")) and obj.visible_get()]
     else:
-        selected_objects = [obj for obj in  bpy.context.scene.objects if (obj.type == "MESH") and obj.visible_get()]
+        selected_objects = [obj for obj in  bpy.context.scene.objects if ((obj.type == "MESH") or (obj.type == "ARMATURE")) and obj.visible_get()]
 
     if len(selected_objects) ==0:
         if operator != None:
@@ -97,15 +97,13 @@ def export_opensim(selected_only=False, rename_mesh=True, grouped=False, individ
         if individual:
             ## Export Objects file for each one
             for obj in selected_objects:
-                if (obj.type == "MESH") and obj.visible_get():
-                    bpy.ops.object.select_all(action='DESELECT')
-                    obj.select_set(True)
-                    export_objects(os.path.join(export_folder, obj.name + ".dae"))
+                bpy.ops.object.select_all(action='DESELECT')
+                obj.select_set(True)
+                export_objects(os.path.join(export_folder, obj.name + ".dae"))
         else:
             bpy.ops.object.select_all(action='DESELECT')
             for obj in selected_objects:
-                if (obj.type == "MESH") and obj.visible_get():
-                    obj.select_set(True)
+                obj.select_set(True)
             export_objects(os.path.join(export_folder, base_name + ".dae"))
 
     else: ## Grouped
