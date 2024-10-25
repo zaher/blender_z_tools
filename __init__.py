@@ -134,10 +134,17 @@ class Z_OpenSIM_Panel(Panel):
 ##
 
 class Z_ConvexSettings(PropertyGroup):
+
     selected_only : BoolProperty(
         name="convext_options",
         description="Convex creating options",
         default = False
+    )
+
+    dissolve_limited : BoolProperty(
+        name="convext_options",
+        description="Dissolve Limited",
+        default = True
     )
 
 class Convex(bpy.types.PropertyGroup):
@@ -190,7 +197,7 @@ class Z_CreateConvexMesh(Operator):
     def execute(self, context):
         # Add code here to define what the operator should do
         #preferences = context.preferences.addons[Z_ToolsPreferences.bl_idname].preferences
-        z_create_convex.create_convex_mesh(selected_only = context.scene.z_convex_settings.selected_only, operator=self)
+        z_create_convex.create_convex_mesh(selected_only = context.scene.z_convex_settings.selected_only, dissolve_limited = context.scene.z_convex_settings.dissolve_limited, operator=self)
         return {'FINISHED'}
 
 class Z_Convex_Edit_Panel(Panel):
@@ -253,7 +260,11 @@ class Z_Convex_Panel(Panel):
 
         row = layout.row(align=True)
         # display the properties
-        row.prop(z_convex_settings, "selected_only", text="Selected Only")
+        row.prop(z_convex_settings, "selected_only", text="Selected Only")        
+
+        row = layout.row(align=True)
+        row.prop(z_convex_settings, "dissolve_limited", text="Dissolve Limited")
+
         row = layout.row(align=True)
         #row.separator_spacer()
         #row = col.row(align=True)
