@@ -11,9 +11,9 @@
 
 import bpy
 from bpy.types import Operator
-from bpy.props import FloatVectorProperty
+#from bpy.props import FloatVectorProperty
 #from bpy_extras.object_utils import AddObjectHelper, object_data_add
-from mathutils import Vector
+#from mathutils import Vector
 
 class OBJ_Z_Bones(bpy.types.Menu):
     bl_idname = "OBJ_Z_Bones" #same as class name

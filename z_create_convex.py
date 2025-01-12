@@ -11,23 +11,23 @@
 
 import bpy
 import bmesh
-import os
-from bl_ui.utils import PresetPanel
-from bpy.types import Panel, Menu
+#import os
+#from bl_ui.utils import PresetPanel
+#from bpy.types import Panel, Menu
 
 def convert_from_3x(del_facemaps = False):
     objs = bpy.context.scene.objects
     for obj in objs:
         if obj.type == "MESH":
             attr = obj.data.attributes.get("Convex")
-            if attr != None:
+            if attr is not None:
                 bpy.context.view_layer.objects.active = obj
                 obj.data.attributes.active = attr
                 attr.name = "z_convex"
                 bpy.ops.geometry.attribute_convert(domain='FACE', data_type='INT')
             if del_facemaps:
                 attr = obj.data.attributes.get("face_maps")
-                if attr != None:
+                if attr is not None:
                     obj.data.attributes.remove(attr)
 
             #bpy.ops.geometry.attribute_convert(domain='FACE', data_type='INT')
@@ -39,12 +39,12 @@ def select_convex_faces(value):
     bm = bmesh.from_edit_mesh(mesh)
     layer = bm.faces.layers.int.get("z_convex")
     count = 0
-    if layer != None:
-        bm.faces.ensure_lookup_table();
+    if layer is not None:
+        bm.faces.ensure_lookup_table()
         for f in bm.faces:
-            if bm.faces[f.index][layer] == True:
+            if bm.faces[f.index][layer]:
                 f.select = value
-            if bm.faces[f.index][layer] == True:
+            if bm.faces[f.index][layer]:
                 count = count + 1
         bmesh.update_edit_mesh(mesh)
     return count
@@ -55,15 +55,15 @@ def assign_convex_faces(value):
     mesh = bpy.context.object.data
     bm = bmesh.from_edit_mesh(mesh)
     layer = bm.faces.layers.int.get("z_convex")
-    if layer == None:
+    if layer is None:
         layer = bm.faces.layers.int.new("z_convex")
 
-    bm.faces.ensure_lookup_table();
+    bm.faces.ensure_lookup_table()
     count = 0
     for f in bm.faces:
         if f.select:
             bm.faces[f.index][layer] = value
-        if bm.faces[f.index][layer] == True:
+        if bm.faces[f.index][layer]:
             count = count + 1
     #run ensure_lookup_table()
     if (count == 0):
@@ -77,12 +77,12 @@ def count_convex_faces():
     mesh = bpy.context.object.data
     bm = bmesh.from_edit_mesh(mesh)
     layer = bm.faces.layers.int.get("z_convex")
-    if layer == None:
+    if layer is None:
         return 0
 
     count = 0
     for f in bm.faces:
-        if bm.faces[f.index][layer] == True:
+        if bm.faces[f.index][layer]:
             count = count + 1
     return count
 
@@ -90,7 +90,7 @@ def has_convex():
     mesh = bpy.context.object.data
     bm = bmesh.from_edit_mesh(mesh)
     layer = bm.faces.layers.int.get("z_convex")
-    return layer != None
+    return layer is not None
 
 ##########################
 ##  create_convex_mesh  ##
@@ -138,7 +138,7 @@ def create_convex_mesh(selected_only = False, operator=None, dissolve_limited = 
             bpy.context.view_layer.objects.active = obj
             obj.select_set(True)
 
-            mesh = obj.data
+            #mesh = obj.data
 
             bpy.ops.object.mode_set(mode='EDIT')
             bpy.ops.mesh.select_all(action='DESELECT')
@@ -176,7 +176,7 @@ def create_convex_mesh(selected_only = False, operator=None, dissolve_limited = 
                     coll.objects.unlink(new_obj)
 
                 attr = new_obj.data.attributes.get(convex_name)
-                if attr != None:
+                if attr is not None:
                     new_obj.data.attributes.remove(attr)
 
                 new_obj.name = new_name

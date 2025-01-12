@@ -4,23 +4,20 @@
 
     Module Blender Z Tools.
 
-thanks to 
-    https://medium.com/geekculture/creating-a-custom-panel-with-blenders-python-api-b9602d890663    
+thanks to
+    https://medium.com/geekculture/creating-a-custom-panel-with-blenders-python-api-b9602d890663
     https://blender.stackexchange.com/questions/146417/quickest-way-to-create-panel-buttons-with-quick-functionality
 
 """
-if "bpy" in locals():
-    import importlib
-    if "z_create_convex" in locals():
-        importlib.reload(z_create_convex)
-    if "z_export_all" in locals():
-        importlib.reload(z_export_all)
 
 import bpy
 import inspect
 import sys
 from bpy.types import Operator
-from bpy.props import (PointerProperty, FloatVectorProperty, BoolProperty)
+from bpy.props import (
+        PointerProperty,
+        #FloatVectorProperty,
+        BoolProperty)
 from bpy.types import (Panel, PropertyGroup)
 
 from . import z_create_convex
@@ -38,6 +35,13 @@ bl_info = {
     "wiki_url": "https://github.com/zaher/blender_z_tools",
     "category": "User"
 }
+
+if "bpy" in locals():
+    import importlib
+    if "z_create_convex" in locals():
+        importlib.reload(z_create_convex)
+    if "z_export_all" in locals():
+        importlib.reload(z_export_all)
 
 ##
 ## Export
@@ -97,7 +101,7 @@ class Z_OpenSIM_Panel(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = "Z Tools"
-    bl_context = "objectmode" 
+    bl_context = "objectmode"
     bl_options = {'HEADER_LAYOUT_EXPAND'}
 
 #    @classmethod
@@ -137,7 +141,7 @@ class Z_ConvexSettings(PropertyGroup):
 
     selected_only : BoolProperty(
         name="convext_options",
-        description="Convex creating options",
+        description="Selected objects only",
         default = False
     )
 
@@ -260,7 +264,7 @@ class Z_Convex_Panel(Panel):
 
         row = layout.row(align=True)
         # display the properties
-        row.prop(z_convex_settings, "selected_only", text="Selected Only")        
+        row.prop(z_convex_settings, "selected_only", text="Selected Only")
 
         row = layout.row(align=True)
         row.prop(z_convex_settings, "dissolve_limited", text="Dissolve Limited")
@@ -280,20 +284,20 @@ classes = inspect.getmembers(current_module, predicate=inspect.isclass)
 
 def z_register():
     for name, cls in classes:
-        if hasattr(cls, 'bl_idname'):     
+        if hasattr(cls, 'bl_idname'):
             bpy.utils.register_class(cls)
 
 def z_unregister():
     for name, cls in reversed(classes):
-        if hasattr(cls, 'bl_idname'):     
+        if hasattr(cls, 'bl_idname'):
             bpy.utils.unregister_class(cls)
 
 def register():
-    bpy.utils.register_class(Z_ConvexSettings)    
+    bpy.utils.register_class(Z_ConvexSettings)
     bpy.utils.register_class(Z_ExportSettings)
     z_register()
     bpy.types.Scene.z_convex_settings = PointerProperty(type=Z_ConvexSettings)
-    bpy.types.Scene.z_export_settings = PointerProperty(type=Z_ExportSettings)    
+    bpy.types.Scene.z_export_settings = PointerProperty(type=Z_ExportSettings)
 
 def unregister():
     z_unregister()
@@ -304,4 +308,4 @@ def unregister():
 
 if __name__ == "__main__":
     register()
-    z_bones.register();
+    z_bones.register()
