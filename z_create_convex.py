@@ -119,14 +119,14 @@ def create_convex_mesh(selected_only = False, operator=None, dissolve_limited = 
             convex_collection = bpy.data.collections.new(collection_convex_name)
             bpy.context.scene.collection.children.link(convex_collection)
 
-        ## Switch to Object Mode
-
-        if bpy.context.mode != "OBJECT":
-            bpy.ops.object.mode_set(mode='OBJECT')
-
         #bpy.ops.object.select_all(action='DESELECT')
 
         for obj in convexObjects:
+
+            ## Switch to Object Mode
+
+            if bpy.context.mode != "OBJECT":
+                bpy.ops.object.mode_set(mode='OBJECT')
 
             new_name = obj.name + name_suffex
             ## Find the new name if exists we will delete the old one
@@ -158,18 +158,18 @@ def create_convex_mesh(selected_only = False, operator=None, dissolve_limited = 
                 ## now we compare new objects with old to find new object created by separate
                 cur_selected = [o for o in bpy.context.scene.objects]
                 new_obj = [o for o in cur_selected if o not in old_selected][0]
- 
+
                 new_obj.data.materials.clear()
 
                 for uv in new_obj.data.uv_layers:
-                    new_obj.data.uv_layers.remove(uv)                
+                    new_obj.data.uv_layers.remove(uv)
 
                 #for material in new_obj.data.materials:
                 #    material.user_clear()
                 #    new_obj.data.materials.remove(material, do_unlink=True)
 
                 #for m in range(len(new_obj.material_slots)):
-                #    new_obj.material_slot_remove({'object': ob})                
+                #    new_obj.material_slot_remove({'object': ob})
 
                 ## Moving it to new collection
                 for coll in new_obj.users_collection:
