@@ -24,7 +24,7 @@ def convert_from_3x(del_facemaps = False):
                 bpy.context.view_layer.objects.active = obj
                 obj.data.attributes.active = attr
                 attr.name = "z_convex"
-                bpy.ops.geometry.attribute_convert(domain='FACE', data_type='INT')
+                bpy.ops.geometry.attribute_convert(domain='FACE', data_type='BOOLEAN')
             if del_facemaps:
                 attr = obj.data.attributes.get("face_maps")
                 if attr is not None:
@@ -37,7 +37,7 @@ def convert_from_3x(del_facemaps = False):
 def select_convex_faces(value):
     mesh = bpy.context.object.data
     bm = bmesh.from_edit_mesh(mesh)
-    layer = bm.faces.layers.int.get("z_convex")
+    layer = bm.faces.layers.bool.get("z_convex")
     count = 0
     if layer is not None:
         bm.faces.ensure_lookup_table()
@@ -54,9 +54,9 @@ def select_convex_faces(value):
 def assign_convex_faces(value):
     mesh = bpy.context.object.data
     bm = bmesh.from_edit_mesh(mesh)
-    layer = bm.faces.layers.int.get("z_convex")
+    layer = bm.faces.layers.bool.get("z_convex")
     if layer is None:
-        layer = bm.faces.layers.int.new("z_convex")
+        layer = bm.faces.layers.bool.new("z_convex")
 
     bm.faces.ensure_lookup_table()
     count = 0
@@ -67,7 +67,7 @@ def assign_convex_faces(value):
             count = count + 1
     #run ensure_lookup_table()
     if (count == 0):
-        bm.faces.layers.int.remove(layer)
+        bm.faces.layers.bool.remove(layer)
     bmesh.update_edit_mesh(mesh)
     return count
 
@@ -76,7 +76,7 @@ def assign_convex_faces(value):
 def count_convex_faces():
     mesh = bpy.context.object.data
     bm = bmesh.from_edit_mesh(mesh)
-    layer = bm.faces.layers.int.get("z_convex")
+    layer = bm.faces.layers.bool.get("z_convex")
     if layer is None:
         return 0
 
@@ -89,7 +89,7 @@ def count_convex_faces():
 def has_convex():
     mesh = bpy.context.object.data
     bm = bmesh.from_edit_mesh(mesh)
-    layer = bm.faces.layers.int.get("z_convex")
+    layer = bm.faces.layers.bool.get("z_convex")
     return layer is not None
 
 ##########################

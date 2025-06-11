@@ -27,8 +27,8 @@ from . import z_bones
 bl_info = {
     "name": "Z Tools",
     "author": "Zaher Dirkey",
-    "version": (2, 0),
-    "blender": (4, 0, 0),
+    "version": (2, 1),
+    "blender": (4, 4, 0),
     "location": "Addons Z Tools Panel (press n)",
     "description": "Z Tools",
     "warning": "",
