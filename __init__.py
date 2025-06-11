@@ -14,15 +14,12 @@ import bpy
 import inspect
 import sys
 from bpy.types import Operator
-from bpy.props import (
-        PointerProperty,
-        #FloatVectorProperty,
-        BoolProperty)
+from bpy.props import (PointerProperty, BoolProperty) #FloatVectorProperty
 from bpy.types import (Panel, PropertyGroup)
 
 from . import z_create_convex
 from . import z_export_all
-from . import z_bones
+#from . import z_bones
 
 bl_info = {
     "name": "Z Tools",
@@ -282,12 +279,12 @@ class Z_Convex_Panel(Panel):
 current_module = sys.modules[__name__]
 classes = inspect.getmembers(current_module, predicate=inspect.isclass)
 
-def z_register():
+def register_classes():
     for name, cls in classes:
         if hasattr(cls, 'bl_idname'):
             bpy.utils.register_class(cls)
 
-def z_unregister():
+def unregister_classes():
     for name, cls in reversed(classes):
         if hasattr(cls, 'bl_idname'):
             bpy.utils.unregister_class(cls)
@@ -295,12 +292,12 @@ def z_unregister():
 def register():
     bpy.utils.register_class(Z_ConvexSettings)
     bpy.utils.register_class(Z_ExportSettings)
-    z_register()
+    register_classes()
     bpy.types.Scene.z_convex_settings = PointerProperty(type=Z_ConvexSettings)
     bpy.types.Scene.z_export_settings = PointerProperty(type=Z_ExportSettings)
 
 def unregister():
-    z_unregister()
+    unregister_classes()
     del bpy.types.Scene.z_convex_settings
     bpy.utils.unregister_class(Z_ConvexSettings)
     del bpy.types.Scene.Z_ExportSettings
@@ -308,4 +305,3 @@ def unregister():
 
 if __name__ == "__main__":
     register()
-    z_bones.register()
