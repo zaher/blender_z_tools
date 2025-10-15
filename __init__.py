@@ -51,6 +51,12 @@ class Z_ExportSettings(PropertyGroup):
         default = False
     )
 
+    rigging : BoolProperty(
+        name="export_rigging",
+        description="Export options",
+        default = False
+    )
+
 class Z_ExportSingle(Operator):
     """ Export selected objects to "output" folder into one .dae files"""
     bl_idname = "ztools.export_single"
@@ -58,7 +64,8 @@ class Z_ExportSingle(Operator):
 
     def execute(self, context):
         selected_only = context.scene.z_export_settings.selected_only
-        z_export_all.export_opensim(selected_only=selected_only, individual=False, operator=self)
+        rigging = context.scene.z_export_settings.rigging
+        z_export_all.export_opensim(selected_only=selected_only, rigging=rigging, individual=False, operator=self)
         return {'FINISHED'}
 
 class Z_ExportIndividual(Operator):
@@ -68,7 +75,8 @@ class Z_ExportIndividual(Operator):
 
     def execute(self, context):
         selected_only = context.scene.z_export_settings.selected_only
-        z_export_all.export_opensim(selected_only=selected_only, individual=True, operator=self)
+        rigging = context.scene.z_export_settings.rigging
+        z_export_all.export_opensim(selected_only=selected_only, rigging=rigging, individual=True, operator=self)
         return {'FINISHED'}
 
 class Z_ExportGrouped(Operator):
@@ -78,7 +86,8 @@ class Z_ExportGrouped(Operator):
 
     def execute(self, context):
         selected_only = context.scene.z_export_settings.selected_only
-        z_export_all.export_opensim(selected_only=selected_only, grouped=True, operator=self)
+        rigging = context.scene.z_export_settings.rigging
+        z_export_all.export_opensim(selected_only=selected_only, rigging=rigging, grouped=True, operator=self)
         return {'FINISHED'}
 
 class Z_ExportByCollections(Operator):
@@ -88,7 +97,8 @@ class Z_ExportByCollections(Operator):
 
     def execute(self, context):
         selected_only = context.scene.z_export_settings.selected_only
-        z_export_all.export_opensim(selected_only=selected_only, grouped=True, by_collections=True, operator=self)
+        rigging = context.scene.z_export_settings.rigging
+        z_export_all.export_opensim(selected_only=selected_only, rigging=rigging, grouped=True, by_collections=True, operator=self)
         return {'FINISHED'}
 
 class Z_OpenSIM_Panel(Panel):
@@ -114,6 +124,7 @@ class Z_OpenSIM_Panel(Panel):
 
         row = layout.row(align=True)
         row.prop(z_export_settings, "selected_only", text="Selected Only")
+        row.prop(z_export_settings, "rigging", text="Rigging")
 
         row = layout.column(align=True)
         row.operator(Z_ExportSingle.bl_idname, text=Z_ExportSingle.bl_label, icon="EXPORT")

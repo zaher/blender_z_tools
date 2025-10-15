@@ -4,7 +4,7 @@
 
     for OpenSIM mesh
     Export all objects that have "Convex" as individual files.
-    The rest of objects exported as one file     
+    The rest of objects exported as one file
 """
 
 import bpy
@@ -16,7 +16,7 @@ convex_name = "z_convex"
 name_suffex =  "-Convex"
 ## Replace these with the names of the objects you want to export
 
-def export_opensim(selected_only=False, rename_mesh=True, grouped=False, individual=False, by_collections = False, operator=None):
+def export_opensim(selected_only=False, rename_mesh=True, grouped=False, individual=False, by_collections = False, rigging=False, operator=None):
 
     exported_count = 0
     exported_objects_count = 0
@@ -79,7 +79,7 @@ def export_opensim(selected_only=False, rename_mesh=True, grouped=False, individ
             apply_modifiers=True,
             keep_bind_info=True,
             include_children=False, ##Rig //* False because it include everything like not work if selected_only is True
-            #include_armatures=True, ##Rig
+            include_armatures=rigging, ##Rig
             # export_object_transformation_type_selection='decomposed', ## ---nope---need it for scale -1 for some linked objects
             export_object_transformation_type_selection='matrix',
             use_texture_copies=True,
@@ -90,7 +90,7 @@ def export_opensim(selected_only=False, rename_mesh=True, grouped=False, individ
             export_global_up_selection='Z',
             export_mesh_type_selection='view',
             use_object_instantiation=False ## False we can have bug in cloned objects when uploaded
-        )        
+        )
 
     ## Export Objects that have Convex
     if not grouped:
@@ -145,7 +145,7 @@ def export_opensim(selected_only=False, rename_mesh=True, grouped=False, individ
                     obj.select_set(True)
             if len(bpy.context.selected_objects)>0:
                 export_objects(os.path.join(export_folder, extend_filename("rest") + ".dae"))
-        
+
     bpy.ops.object.select_all(action='DESELECT')
 
     if exported_count>0:
