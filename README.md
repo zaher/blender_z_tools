@@ -44,4 +44,4 @@ Export will fix mesh(data) name to the same name of object name, this help OpenS
 
 ### Notes
 
-Tested and work fine in Blender 3.6
+Tested and work fine in Blender 4.2

@@ -311,7 +311,7 @@ def unregister():
     unregister_classes()
     del bpy.types.Scene.z_convex_settings
     bpy.utils.unregister_class(Z_ConvexSettings)
-    del bpy.types.Scene.Z_ExportSettings
+    del bpy.types.Scene.z_export_settings
     bpy.utils.unregister_class(Z_ExportSettings)
 
 if __name__ == "__main__":
